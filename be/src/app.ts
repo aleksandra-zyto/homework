@@ -1,11 +1,16 @@
 import dotenv from "dotenv";
 dotenv.config();
 import sequelize from "./config/database";
+import User from "./models/User";
+import userRoutes from "./routes/userRoutes";
 
 import express, { Request, Response } from "express";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+app.use(express.json());
+app.use("/api/users", userRoutes);
 
 app.use(express.json());
 
