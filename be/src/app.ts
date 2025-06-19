@@ -5,7 +5,7 @@ import sequelize from "./config/database";
 import express, { Request, Response } from "express";
 
 const app = express();
-const port = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 
@@ -20,15 +20,20 @@ const startServer = async () => {
     await sequelize.authenticate();
     console.log("✅ Database connection established successfully!");
 
+    // Sync models (create tables)
+    console.log("Creating database tables...");
+    await sequelize.sync({ force: false });
+    console.log("✅ Database tables created successfully!");
+
     // Start server
-    app.listen(port, () => {
-      console.log(`🚀 Server running on http://localhost:${port}`);
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
       console.log(
-        "💾 SQLite database file: database.sqlite (will be created automatically)"
+        "💾 User table created with: id, email, firstName, lastName, password, isActive, createdAt, updatedAt"
       );
     });
   } catch (error) {
-    console.error("❌ Unable to connect to database:", error);
+    console.error("❌ Unable to start server:", error);
     process.exit(1);
   }
 };
