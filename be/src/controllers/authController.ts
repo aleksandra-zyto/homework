@@ -30,20 +30,37 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       password,
     });
 
-    const userResponse = user.toJSON();
-    userResponse.id = user.id;
-
     // Generate JWT token
     const token = generateToken(user.id, user.email);
 
-    // Return user data (without password) and token
+    // Return user data WITHOUT password and token
     res.status(201).json({
       message: "User registered successfully",
-      user: userResponse,
+      user: user.toSafeJSON(), // This method excludes the password
       token,
     });
   } catch (error: any) {
     console.error("Register error:", error);
+
+    // Handle validation errors (like password requirements)
+    if (error.name === "SequelizeValidationError") {
+      const validationErrors = error.errors.map((err: any) => ({
+        field: err.path,
+        message: err.message,
+      }));
+      res.status(400).json({
+        error: "Validation failed",
+        details: validationErrors,
+      });
+      return;
+    }
+
+    // Handle unique constraint errors (duplicate email)
+    if (error.name === "SequelizeUniqueConstraintError") {
+      res.status(409).json({ error: "Email already exists" });
+      return;
+    }
+
     res.status(500).json({ error: "Failed to register user" });
   }
 };
@@ -84,10 +101,10 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     // Generate JWT token
     const token = generateToken(user.id, user.email);
 
-    // Return user data (without password) and token
+    // Return user data WITHOUT password and token
     res.status(200).json({
       message: "Login successful",
-      user: user.toSafeJSON(),
+      user: user.toSafeJSON(), // This method excludes the password
       token,
     });
   } catch (error) {
@@ -112,7 +129,7 @@ export const getProfile = async (
     }
 
     res.status(200).json({
-      user: user.toSafeJSON(),
+      user: user.toSafeJSON(), // This method excludes the password
     });
   } catch (error) {
     console.error("Get profile error:", error);
