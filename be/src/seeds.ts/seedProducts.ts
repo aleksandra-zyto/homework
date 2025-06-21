@@ -1,6 +1,22 @@
 import sequelize from "../config/database";
 import Product, { Category } from "../models/Product";
 import Review from "../models/Review";
+import User from "../models/User";
+
+const seedUsers = [
+  {
+    email: "admin@store.com",
+    firstName: "Sarah",
+    lastName: "Johnson",
+    password: "Admin123", // Will be hashed automatically
+  },
+  {
+    email: "staff@store.com",
+    firstName: "Mike",
+    lastName: "Davis",
+    password: "Staff123", // Will be hashed automatically
+  },
+];
 
 // Properly type the seed data to match our Product model
 const seedProducts: Array<{
@@ -85,6 +101,19 @@ const seedReviews = [
 export const seedDatabase = async () => {
   try {
     console.log("🌱 Starting database seeding...");
+
+    const existingUsers = await User.count();
+    if (existingUsers > 0) {
+      console.log("👥 Users already exist, skipping user seeding");
+    } else {
+      // Create all users
+      await User.bulkCreate(seedUsers);
+      console.log(`✅ Successfully seeded ${seedUsers.length} users!`);
+      console.log("👥 Seeded users:");
+      seedUsers.forEach((user) => {
+        console.log(`   📧 ${user.email} (${user.firstName} ${user.lastName})`);
+      });
+    }
 
     // Check if products already exist
     const existingProducts = await Product.count();
