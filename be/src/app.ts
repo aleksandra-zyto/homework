@@ -2,9 +2,12 @@ import dotenv from "dotenv";
 dotenv.config();
 import sequelize from "./config/database";
 import User from "./models/User";
+import Product from "./models/Product";
+import Review from "./models/Review";
 import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoutes";
 import productRoutes from "./routes/productRoutes";
+import reviewRoutes from "./routes/reviewRoutes";
 import { seedDatabase } from "./seeds.ts/seedProducts";
 
 import express, { Request, Response } from "express";
@@ -15,6 +18,8 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 app.use(express.json());
 
