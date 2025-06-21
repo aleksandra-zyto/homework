@@ -98,22 +98,39 @@ const seedReviews = [
   },
 ];
 
+const seedUsersIndividually = async () => {
+  console.log("👥 Starting user seeding...");
+
+  for (const userData of seedUsers) {
+    try {
+      // Check if user already exists
+      const existingUser = await User.findOne({
+        where: { email: userData.email },
+      });
+
+      if (existingUser) {
+        console.log(`👤 User ${userData.email} already exists, skipping`);
+        continue;
+      }
+
+      // Create user individually - this triggers the beforeCreate hook for password hashing
+      const user = await User.create(userData);
+      console.log(
+        `✅ Created user: ${user.email} (${user.firstName} ${user.lastName})`
+      );
+    } catch (error) {
+      console.error(`❌ Failed to create user ${userData.email}:`, error);
+    }
+  }
+
+  console.log("👥 User seeding completed!");
+};
+
 export const seedDatabase = async () => {
   try {
     console.log("🌱 Starting database seeding...");
 
-    const existingUsers = await User.count();
-    if (existingUsers > 0) {
-      console.log("👥 Users already exist, skipping user seeding");
-    } else {
-      // Create all users
-      await User.bulkCreate(seedUsers);
-      console.log(`✅ Successfully seeded ${seedUsers.length} users!`);
-      console.log("👥 Seeded users:");
-      seedUsers.forEach((user) => {
-        console.log(`   📧 ${user.email} (${user.firstName} ${user.lastName})`);
-      });
-    }
+    await seedUsersIndividually();
 
     // Check if products already exist
     const existingProducts = await Product.count();
