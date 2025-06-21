@@ -10,11 +10,19 @@ import productRoutes from "./routes/productRoutes";
 import reviewRoutes from "./routes/reviewRoutes";
 import { seedDatabase } from "./seeds.ts/seedProducts";
 import "./models/index";
+import cors from "cors";
 
 import express, { Request, Response } from "express";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Replace with your frontend's URL/port
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use("/api/auth", authRoutes);
