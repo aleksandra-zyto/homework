@@ -1,0 +1,29 @@
+// Color Palette Variables
+$black: #000000;
+$dark-gray: #181818;
+$teal: #2cccc3;
+$yellow: #facd3d;
+$purple: #5626c4;
+$pink: #e60576;
+
+$primary: $purple;
+$secondary: $teal;
+$accent: $yellow;
+$warning: $pink;
+$text-primary: $black;
+$text-secondary: $dark-gray;
+$background-dark: $dark-gray;
+
+// Additional useful colors derived from your palette
+$white: #ffffff;
+$light-gray: #f5f5f5;
+
+// Color variations (auto-generated lighter/darker versions)
+$teal-light: lighten($teal, 20%);
+$teal-dark: darken($teal, 20%);
+$purple-light: lighten($purple, 20%);
+$purple-dark: darken($purple, 20%);
+$yellow-light: lighten($yellow, 20%);
+$yellow-dark: darken($yellow, 20%);
+$pink-light: lighten($pink, 20%);
+$pink-dark: darken($pink, 20%);
