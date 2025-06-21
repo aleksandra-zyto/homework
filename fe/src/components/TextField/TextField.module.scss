@@ -1,0 +1,287 @@
+@import '../../styles/colors';
+
+.textfield {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: auto;
+}
+
+.textfield--full-width {
+  width: 100%;
+}
+
+// Label styles
+.label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $text-primary;
+  transition: color 0.2s ease;
+  margin-bottom: 0.25rem;
+}
+
+.required {
+  color: $warning;
+  margin-left: 0.25rem;
+}
+
+// Input container
+.inputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+// Input field base styles
+.input {
+  width: 100%;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $text-primary;
+  background-color: $white;
+  border: 2px solid lighten($dark-gray, 60%);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  transition: all 0.2s ease;
+  outline: none;
+
+  &::placeholder {
+    color: lighten($text-secondary, 20%);
+  }
+
+  &:focus {
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.1);
+  }
+
+  &:hover:not(:disabled):not(:read-only) {
+    border-color: $text-secondary;
+  }
+
+  &:disabled {
+    background-color: lighten($light-gray, 3%);
+    border-color: lighten($light-gray, 10%);
+    color: lighten($text-secondary, 20%);
+    cursor: not-allowed;
+  }
+
+  &:read-only {
+    background-color: lighten($light-gray, 5%);
+    cursor: default;
+  }
+}
+
+// Size variants
+.textfield--small {
+  .input {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+  
+  .label {
+    font-size: 0.8125rem;
+  }
+
+  .icon {
+    svg {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+}
+
+.textfield--large {
+  .input {
+    padding: 1rem 1.25rem;
+    font-size: 1.125rem;
+  }
+  
+  .label {
+    font-size: 1rem;
+  }
+
+  .icon {
+    svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+}
+
+// Variant styles
+.textfield--outlined {
+  // Default styles (already applied above)
+}
+
+.textfield--filled {
+  .input {
+    background-color: $light-gray;
+    border: 2px solid transparent;
+    border-radius: 8px 8px 0 0;
+
+    &:focus {
+      background-color: $white;
+      border-color: $primary;
+    }
+
+    &:hover:not(:disabled):not(:read-only) {
+      background-color: darken($light-gray, 5%);
+    }
+  }
+}
+
+.textfield--standard {
+  .input {
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid lighten($dark-gray, 60%);
+    border-radius: 0;
+    padding-left: 0;
+    padding-right: 0;
+
+    &:focus {
+      border-bottom-color: $primary;
+      box-shadow: none;
+    }
+
+    &:hover:not(:disabled):not(:read-only) {
+      border-bottom-color: $text-secondary;
+    }
+  }
+}
+
+// State variants
+.textfield--error {
+  .label {
+    color: $warning;
+  }
+
+  .input {
+    border-color: $warning;
+
+    &:focus {
+      border-color: $warning;
+      box-shadow: 0 0 0 3px rgba($warning, 0.1);
+    }
+  }
+
+  .icon {
+    color: $warning;
+  }
+}
+
+.textfield--success {
+  .label {
+    color: $secondary;
+  }
+
+  .input {
+    border-color: $secondary;
+
+    &:focus {
+      border-color: $secondary;
+      box-shadow: 0 0 0 3px rgba($secondary, 0.1);
+    }
+  }
+
+  .icon {
+    color: $secondary;
+  }
+}
+
+.textfield--disabled {
+  .label {
+    color: lighten($text-secondary, 30%);
+  }
+
+  .icon {
+    color: lighten($text-secondary, 40%);
+  }
+}
+
+.textfield--readonly {
+  .icon {
+    color: lighten($text-secondary, 20%);
+  }
+}
+
+// Icon styles
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-secondary;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  pointer-events: none;
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+.icon--start {
+  left: 0.75rem;
+}
+
+.icon--end {
+  right: 0.75rem;
+}
+
+// Adjust padding when icons are present
+.textfield--with-icons {
+  .input {
+    padding-left: 2.75rem;
+    padding-right: 2.75rem;
+  }
+
+  // If only start icon
+  &:not(:has(.icon--end)) .input {
+    padding-right: 1rem;
+  }
+
+  // If only end icon
+  &:not(:has(.icon--start)) .input {
+    padding-left: 1rem;
+  }
+}
+
+// Fallback for browsers without :has() support
+.textfield--with-icons .input {
+  padding-left: 2.75rem;
+  padding-right: 2.75rem;
+}
+
+// Loading spinner
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid lighten($primary, 40%);
+  border-top: 2px solid $primary;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Helper text
+.helperText {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  margin-top: -0.25rem;
+}
+
+.helperText--helper {
+  color: $text-secondary;
+}
+
+.helperText--error {
+  color: $warning;
+}
