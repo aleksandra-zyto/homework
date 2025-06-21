@@ -88,6 +88,11 @@ User.init(
       allowNull: false,
       validate: {
         len: [8, 100],
+        hasNumber(value: string) {
+          if (!/\d/.test(value)) {
+            throw new Error("Password must contain at least one number");
+          }
+        },
       },
     },
     isActive: {
