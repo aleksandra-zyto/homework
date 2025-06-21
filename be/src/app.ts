@@ -9,6 +9,7 @@ import authRoutes from "./routes/authRoutes";
 import productRoutes from "./routes/productRoutes";
 import reviewRoutes from "./routes/reviewRoutes";
 import { seedDatabase } from "./seeds.ts/seedProducts";
+import "./models/index";
 
 import express, { Request, Response } from "express";
 
