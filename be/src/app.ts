@@ -4,6 +4,8 @@ import sequelize from "./config/database";
 import User from "./models/User";
 import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoutes";
+import productRoutes from "./routes/productRoutes";
+import { seedDatabase } from "./seeds.ts/seedProducts";
 
 import express, { Request, Response } from "express";
 
@@ -31,6 +33,8 @@ const startServer = async () => {
     console.log("Creating database tables...");
     await sequelize.sync({ force: false });
     console.log("✅ Database tables created successfully!");
+
+    await seedDatabase();
 
     // Start server
     app.listen(PORT, () => {
