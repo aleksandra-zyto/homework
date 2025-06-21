@@ -1,5 +1,6 @@
 import sequelize from "../config/database";
 import Product, { Category } from "../models/Product";
+import Review from "../models/Review";
 
 // Properly type the seed data to match our Product model
 const seedProducts: Array<{
@@ -38,6 +39,49 @@ const seedProducts: Array<{
   { name: "Artisan Chocolate Box", category: "Food & Drink", price: 28.99 },
 ];
 
+const seedReviews = [
+  {
+    productId: 1,
+    rating: 5,
+    comment: "Amazing phone! Love the camera quality and battery life.",
+  },
+  { productId: 1, rating: 4, comment: "Great phone but quite expensive." },
+  { productId: 2, rating: 5, comment: "Perfect sound quality for the price!" },
+  { productId: 3, rating: 3, comment: "Decent speaker, nothing special." },
+  {
+    productId: 4,
+    rating: 5,
+    comment: "Classic Nike quality, very comfortable!",
+  },
+  { productId: 5, rating: 4, comment: "Good jeans, fit well and durable." },
+  {
+    productId: 7,
+    rating: 5,
+    comment: "Best vacuum I've ever owned! Powerful suction.",
+  },
+  { productId: 8, rating: 4, comment: "Makes great coffee, easy to use." },
+  {
+    productId: 10,
+    rating: 4,
+    comment: "Solid tennis racket, good for beginners.",
+  },
+  {
+    productId: 13,
+    rating: 3,
+    comment: "Nice color but a bit pricey for a lipstick.",
+  },
+  {
+    productId: 16,
+    rating: 5,
+    comment: "Delicious honey! Great quality and taste.",
+  },
+  {
+    productId: 18,
+    rating: 2,
+    comment: "Chocolate was okay but arrived melted.",
+  },
+];
+
 export const seedDatabase = async () => {
   try {
     console.log("🌱 Starting database seeding...");
@@ -45,17 +89,37 @@ export const seedDatabase = async () => {
     // Check if products already exist
     const existingProducts = await Product.count();
     if (existingProducts > 0) {
-      console.log("📦 Products already exist, skipping seeding");
-      return;
+      console.log("📦 Products already exist, skipping product seeding");
+    } else {
+      // Create all products
+      await Product.bulkCreate(seedProducts);
+      console.log(`✅ Successfully seeded ${seedProducts.length} products!`);
     }
 
-    // Create all products
-    await Product.bulkCreate(seedProducts);
+    // Check if reviews already exist
+    const existingReviews = await Review.count();
+    if (existingReviews > 0) {
+      console.log("📝 Reviews already exist, skipping review seeding");
+    } else {
+      // Get all products to get their categories
+      const products = await Product.findAll();
 
-    console.log(`✅ Successfully seeded ${seedProducts.length} products!`);
+      // Add category to each review based on the product
+      const reviewsWithCategory = seedReviews.map((review) => {
+        const product = products.find((p) => p.id === review.productId);
+        return {
+          ...review,
+          category: product?.category || "Electronics", // fallback category
+        };
+      });
+
+      // Create all reviews
+      await Review.bulkCreate(reviewsWithCategory);
+      console.log(`✅ Successfully seeded ${seedReviews.length} reviews!`);
+    }
+
+    // Show summary (your existing summary code can stay here)
     console.log("📊 Products by category:");
-
-    // Show summary
     const categories = [...new Set(seedProducts.map((p) => p.category))];
     for (const category of categories) {
       const count = seedProducts.filter((p) => p.category === category).length;
@@ -88,18 +152,3 @@ export const seedDatabase = async () => {
     throw error;
   }
 };
-
-// Run seeding if this file is executed directly
-if (require.main === module) {
-  (async () => {
-    try {
-      await sequelize.authenticate();
-      await sequelize.sync();
-      await seedDatabase();
-      process.exit(0);
-    } catch (error) {
-      console.error("Failed to seed database:", error);
-      process.exit(1);
-    }
-  })();
-}
