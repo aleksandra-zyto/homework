@@ -1,5 +1,6 @@
 @import '../../styles/colors';
 
+
 .button {
   display: inline-flex;
   align-items: center;
@@ -56,16 +57,17 @@
   width: 100%;
 }
 
-// Primary variant - Solid purple
+// Primary variant - Main purple
 .button--primary {
-  background: linear-gradient(135deg, $primary 0%, darken($primary, 10%) 100%);
+  background: $primary;
   color: $white;
   border-color: $primary;
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba($primary, 0.3);
-    background: linear-gradient(135deg, lighten($primary, 5%) 0%, $primary 100%);
+    background: $primary-light;
+    border: 1px solid $primary-light;
   }
 
   &:active:not(:disabled) {
@@ -74,21 +76,21 @@
   }
 }
 
-// Secondary variant - Solid coral
+// Secondary variant - Success green
 .button--secondary {
-  background: linear-gradient(135deg, $secondary 0%, darken($secondary, 10%) 100%);
+  background: $success;
   color: $white;
-  border-color: $secondary;
+  border-color: $success;
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba($secondary, 0.3);
-    background: linear-gradient(135deg, lighten($secondary, 5%) 0%, $secondary 100%);
+    box-shadow: 0 8px 25px rgba($success, 0.3);
+    background: lighten($success, 5%);
   }
 
   &:active:not(:disabled) {
     transform: translateY(0);
-    box-shadow: 0 4px 15px rgba($secondary, 0.2);
+    box-shadow: 0 4px 15px rgba($success, 0.2);
   }
 }
 
@@ -100,8 +102,8 @@
 
   &:hover:not(:disabled) {
     background: rgba($primary, 0.05);
-    border-color: darken($primary, 10%);
-    color: darken($primary, 10%);
+    border-color: $primary-dark;
+    color: $primary-dark;
     transform: translateY(-1px);
     box-shadow: 0 4px 15px rgba($primary, 0.15);
   }
@@ -122,7 +124,7 @@
 
   &:hover:not(:disabled) {
     background: rgba($primary, 0.05);
-    color: darken($primary, 10%);
+    color: $primary-dark;
   }
 
   &:active:not(:disabled) {
@@ -132,67 +134,18 @@
 
 // Danger variant - For destructive actions
 .button--danger {
-  background: linear-gradient(135deg, #e53e3e 0%, darken(#e53e3e, 10%) 100%);
+  background: $danger;
   color: $white;
-  border-color: #e53e3e;
+  border-color: $danger;
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(#e53e3e, 0.3);
-    background: linear-gradient(135deg, lighten(#e53e3e, 5%) 0%, #e53e3e 100%);
+    box-shadow: 0 8px 25px rgba($danger, 0.3);
+    background: lighten($danger, 5%);
   }
 
   &:active:not(:disabled) {
     transform: translateY(0);
-    box-shadow: 0 4px 15px rgba(#e53e3e, 0.2);
+    box-shadow: 0 4px 15px rgba($danger, 0.2);
   }
-}
-
-// Icon styles
-.icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  svg {
-    width: 1rem;
-    height: 1rem;
-  }
-}
-
-.button--small .icon svg {
-  width: 0.875rem;
-  height: 0.875rem;
-}
-
-.button--large .icon svg {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
-// Loading spinner
-.spinner {
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid rgba($white, 0.3);
-  border-top: 2px solid $white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-.button--outlined .spinner,
-.button--text .spinner {
-  border: 2px solid rgba($primary, 0.3);
-  border-top: 2px solid $primary;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-// Content wrapper
-.content {
-  display: flex;
-  align-items: center;
 }
