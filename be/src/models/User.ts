@@ -1,5 +1,5 @@
-// src/models/User.ts
 import { DataTypes, Model, Optional } from "sequelize";
+import bcrypt from "bcryptjs";
 import sequelize from "../config/database";
 
 // Define what our User object looks like
@@ -14,26 +14,41 @@ interface UserAttributes {
   updatedAt?: Date;
 }
 
-// For creating users - id, createdAt, updatedAt are optional (auto-generated)
 interface UserCreationAttributes
   extends Optional<
     UserAttributes,
     "id" | "isActive" | "createdAt" | "updatedAt"
   > {}
 
-// The User model class
 class User
   extends Model<UserAttributes, UserCreationAttributes>
   implements UserAttributes
 {
-  public id!: number;
-  public email!: string;
-  public firstName!: string;
-  public lastName!: string;
-  public password!: string;
-  public isActive!: boolean;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare id: number;
+  declare email: string;
+  declare firstName: string;
+  declare lastName: string;
+  declare password: string;
+  declare isActive: boolean;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
+
+  // Instance method to check password
+  public async comparePassword(candidatePassword: string): Promise<boolean> {
+    const userPassword = this.getDataValue("password");
+
+    if (!userPassword) {
+      throw new Error("User password not found");
+    }
+
+    return bcrypt.compare(candidatePassword, userPassword);
+  }
+
+  // Instance method to get user without password
+  public toSafeJSON(): Omit<UserAttributes, "password"> {
+    const { password, ...userWithoutPassword } = this.toJSON();
+    return userWithoutPassword;
+  }
 }
 
 // Define the database table structure
@@ -84,7 +99,22 @@ User.init(
     sequelize,
     modelName: "User",
     tableName: "users",
-    timestamps: true, // Automatically adds createdAt and updatedAt
+    timestamps: true,
+    hooks: {
+      // Hash password before saving to database
+      beforeCreate: async (user: User) => {
+        if (user.password) {
+          const saltRounds = parseInt(process.env.BCRYPT_ROUNDS || "12");
+          user.password = await bcrypt.hash(user.password, saltRounds);
+        }
+      },
+      beforeUpdate: async (user: User) => {
+        if (user.changed("password")) {
+          const saltRounds = parseInt(process.env.BCRYPT_ROUNDS || "12");
+          user.password = await bcrypt.hash(user.password, saltRounds);
+        }
+      },
+    },
   }
 );
 

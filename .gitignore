@@ -158,6 +158,8 @@ sketch
 *.sqlite3
 *.db
 database.sqlite
+database.sqlite-*
+
 
 # Database directories (if you use other DBs later)
 /data/
