@@ -1,32 +1,15 @@
 import React, { forwardRef } from "react";
 import styles from "./Button.module.scss";
 
-export interface ButtonProps {
-  // Content
-  children: React.ReactNode;
-
-  // Variants
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  // Design system props
   variant?: "primary" | "secondary" | "outlined" | "text" | "danger";
   size?: "small" | "medium" | "large";
-
-  // States
-  disabled?: boolean;
-  loading?: boolean;
   fullWidth?: boolean;
-
-  // Icons
+  loading?: boolean;
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
-
-  // HTML button props
-  type?: "button" | "submit" | "reset";
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  onFocus?: (event: React.FocusEvent<HTMLButtonElement>) => void;
-  onBlur?: (event: React.FocusEvent<HTMLButtonElement>) => void;
-
-  // Styling
-  className?: string;
-  style?: React.CSSProperties;
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
