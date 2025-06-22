@@ -12,7 +12,7 @@ const ChartBarIcon = () => (
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={2}
-      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012-2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
     />
   </svg>
 );
@@ -44,9 +44,14 @@ const CurrencyIcon = () => (
     />
   </svg>
 );
-
 const RefreshIcon = () => (
-  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <svg
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    width="20"
+    height="20"
+  >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -55,7 +60,6 @@ const RefreshIcon = () => (
     />
   </svg>
 );
-
 export const AnalyticsCards = () => {
   const [analytics, setAnalytics] = useState<AnalyticsResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -126,6 +130,7 @@ export const AnalyticsCards = () => {
             label="reviews collected"
             icon={<ChartBarIcon />}
             loading={loading}
+            size="medium"
           />
         </div>
 
@@ -153,6 +158,7 @@ export const AnalyticsCards = () => {
             label="best performing category"
             icon={<TagIcon />}
             loading={loading}
+            size="medium"
           />
         </div>
 
@@ -164,6 +170,7 @@ export const AnalyticsCards = () => {
             label="price range with most reviews"
             icon={<CurrencyIcon />}
             loading={loading}
+            size="medium"
           />
         </div>
       </div>

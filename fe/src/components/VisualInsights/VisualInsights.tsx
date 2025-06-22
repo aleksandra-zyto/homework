@@ -46,7 +46,13 @@ const PieChartIcon = () => (
 );
 
 const RefreshIcon = () => (
-  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <svg
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    width="20"
+    height="20"
+  >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"

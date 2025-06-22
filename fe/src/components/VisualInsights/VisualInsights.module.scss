@@ -1,9 +1,8 @@
 @import '../../styles/colors';
 
 .visualInsights {
-  padding: 0 2rem 2rem 2rem;
-  // max-width: 1200px;
-  margin: 0 auto;
+  padding: 0;
+  margin: 0;
 }
 
 .sectionTitle {
@@ -31,10 +30,6 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 2rem;
-  
-  @media (min-width: 1024px) {
-    grid-template-columns: 2fr 1fr;
-  }
 }
 
 .chartControls {
@@ -93,21 +88,7 @@
 }
 
 // Responsive adjustments
-@media (max-width: 1023px) {
-  .chartsGrid {
-    grid-template-columns: 1fr;
-  }
-  
-  .chartControls {
-    justify-content: center;
-  }
-}
-
 @media (max-width: 640px) {
-  .visualInsights {
-    padding: 0 1rem 2rem 1rem;
-  }
-  
   .sectionTitle {
     font-size: 1.5rem;
     
