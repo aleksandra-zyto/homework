@@ -37,7 +37,7 @@ interface ProductAttributes {
   id: number;
   name: string;
   category: Category;
-  price: number; // Store actual price instead of range
+  price: number; // Store actual price instead of range as we calculate the range dynamically
   createdAt?: Date;
   updatedAt?: Date;
 }

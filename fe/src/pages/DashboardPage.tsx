@@ -61,7 +61,6 @@ export const DashboardPage = () => {
     <div className={styles.dashboardPage}>
       <DashboardHeader onRefresh={triggerRefresh} />
 
-      {/* Notification */}
       {notification && (
         <div className={`${styles.notification} ${styles[notification.type]}`}>
           <span>{notification.message}</span>
@@ -75,7 +74,6 @@ export const DashboardPage = () => {
         </div>
       )}
 
-      {/* Floating Add Review Button */}
       <Button
         onClick={() => setIsAddReviewModalOpen(true)}
         variant="primary"
@@ -94,7 +92,6 @@ export const DashboardPage = () => {
         <ReviewsTable refreshTrigger={refreshTrigger} />
       </main>
 
-      {/* Add Review Modal */}
       <AddReviewModal
         isOpen={isAddReviewModalOpen}
         onClose={() => setIsAddReviewModalOpen(false)}

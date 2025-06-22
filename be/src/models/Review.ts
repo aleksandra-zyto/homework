@@ -38,11 +38,6 @@ class Review
     return this.rating < 3;
   }
 
-  // Instance method to get star rating as string
-  public getStarRating(): string {
-    return "★".repeat(this.rating) + "☆".repeat(5 - this.rating);
-  }
-
   // Instance method to get comment preview
   public getCommentPreview(maxLength: number = 50): string {
     if (!this.comment) return "";

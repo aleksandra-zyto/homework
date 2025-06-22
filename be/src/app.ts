@@ -32,8 +32,9 @@ app.use("/api/reviews", reviewRoutes);
 
 app.use(express.json());
 
+// Health check route
 app.get("/", (req: Request, res: Response) => {
-  res.send("Hello World!");
+  res.send("API is running");
 });
 
 const startServer = async () => {
@@ -48,6 +49,7 @@ const startServer = async () => {
     await sequelize.sync({ force: false });
     console.log("✅ Database tables created successfully!");
 
+    // Seed database with initial data
     await seedDatabase();
 
     // Start server

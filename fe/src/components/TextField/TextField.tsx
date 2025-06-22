@@ -1,30 +1,14 @@
 import React, { forwardRef } from "react";
 import styles from "./TextField.module.scss";
 
-export interface TextFieldProps {
-  // Basic input props
-  id?: string;
-  name?: string;
-  type?: "text" | "email" | "password" | "number" | "tel" | "url" | "search";
-  value?: string;
-  defaultValue?: string;
-  placeholder?: string;
-  disabled?: boolean;
-  readOnly?: boolean;
-  required?: boolean;
-  autoComplete?: string;
-  autoFocus?: boolean;
-  maxLength?: number;
-  minLength?: number;
-
-  // Label and help text
+export interface TextFieldProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
+  // Design system props
   label?: string;
   helperText?: string;
   errorText?: string;
-
-  // Visual variants
   variant?: "outlined" | "filled" | "standard";
-  size?: "small" | "medium" | "large";
+  size?: "small" | "medium" | "large"; // Override the native size prop
   fullWidth?: boolean;
 
   // State variants
@@ -35,35 +19,11 @@ export interface TextFieldProps {
   // Icon support
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
-
-  // Event handlers
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
-  onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
-  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
-  onKeyUp?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
-
-  // Additional styling
-  className?: string;
-  style?: React.CSSProperties;
 }
 
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
   (
     {
-      id,
-      name,
-      type = "text",
-      value,
-      defaultValue,
-      placeholder,
-      disabled = false,
-      readOnly = false,
-      required = false,
-      autoComplete,
-      autoFocus = false,
-      maxLength,
-      minLength,
       label,
       helperText,
       errorText,
@@ -75,13 +35,13 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       loading = false,
       startIcon,
       endIcon,
-      onChange,
-      onBlur,
-      onFocus,
-      onKeyDown,
-      onKeyUp,
+
+      id,
+      required = false,
+      disabled = false,
       className = "",
       style,
+
       ...rest
     },
     ref
@@ -97,7 +57,6 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       styles[`textfield--${size}`],
       fullWidth && styles["textfield--full-width"],
       disabled && styles["textfield--disabled"],
-      readOnly && styles["textfield--readonly"],
       error && styles["textfield--error"],
       success && styles["textfield--success"],
       loading && styles["textfield--loading"],
@@ -134,24 +93,13 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           <input
             ref={ref}
             id={inputId}
-            name={name}
-            type={type}
-            value={value}
-            defaultValue={defaultValue}
-            placeholder={placeholder}
-            disabled={disabled}
-            readOnly={readOnly}
             required={required}
-            autoComplete={autoComplete}
-            autoFocus={autoFocus}
-            maxLength={maxLength}
-            minLength={minLength}
-            onChange={onChange}
-            onBlur={onBlur}
-            onFocus={onFocus}
-            onKeyDown={onKeyDown}
-            onKeyUp={onKeyUp}
+            disabled={disabled || loading}
             className={styles.input}
+            aria-invalid={error}
+            aria-describedby={
+              displayHelperText ? `${inputId}-helper-text` : undefined
+            }
             {...rest}
           />
 
@@ -166,6 +114,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
         {/* Helper Text */}
         {displayHelperText && (
           <div
+            id={`${inputId}-helper-text`}
             className={`${styles.helperText} ${
               styles[`helperText--${helperTextType}`]
             }`}

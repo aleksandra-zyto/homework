@@ -83,7 +83,7 @@ export class ApiService {
     return api.get("/api/reviews/analytics");
   }
 
-  // User endpoints (if needed for admin features)
+  // User endpoints
   static async getUser(id: number): Promise<User> {
     return api.get(`/api/users/${id}`);
   }

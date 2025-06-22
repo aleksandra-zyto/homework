@@ -99,13 +99,12 @@ export const VisualInsights = ({ refreshTrigger = 0 }: VisualInsightsProps) => {
       case "rating":
         // Use actual rating distribution from backend
         const ratingData = analytics.ratingDistribution || {};
-        // Ensure we show all rating levels (1-5 stars) even if there are no reviews for some
         return [1, 2, 3, 4, 5]
           .map((rating) => ({
             name: `${rating} Star${rating !== 1 ? "s" : ""}`,
             value: ratingData[`${rating} Star${rating !== 1 ? "s" : ""}`] || 0,
           }))
-          .filter((item) => item.value > 0); // Only show ratings that have reviews
+          .filter((item) => item.value > 0);
 
       case "priceRange":
         return Object.entries(analytics.priceRangeDistribution || {}).map(

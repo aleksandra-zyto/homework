@@ -1,4 +1,3 @@
-// src/controllers/userController.ts
 import { Request, Response } from "express";
 import User from "../models/User";
 
@@ -44,7 +43,7 @@ export const createUser = async (
       email,
       firstName,
       lastName,
-      password, // Note: In production, you'd hash this password!
+      password,
     });
 
     const userResponse = user.toJSON();

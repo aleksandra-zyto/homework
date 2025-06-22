@@ -7,11 +7,7 @@ export interface CardProps {
   value?: string | number;
   label?: string;
   icon?: React.ReactNode;
-  trend?: {
-    value: string;
-    direction: "positive" | "negative" | "neutral";
-    icon?: React.ReactNode;
-  };
+
   size?: "small" | "medium" | "large";
   loading?: boolean;
   children?: React.ReactNode;
@@ -25,7 +21,6 @@ export const Card = ({
   value,
   label,
   icon,
-  trend,
   size = "medium",
   loading = false,
   children,
