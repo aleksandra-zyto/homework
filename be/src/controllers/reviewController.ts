@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import Review from "../models/Review";
 import Product from "../models/Product";
-import { Op } from "sequelize";
+import { Op, QueryTypes } from "sequelize";
 import sequelize from "../config/database";
 
 // Create a new review
@@ -171,23 +171,34 @@ export const getAnalytics = async (
 
     const bestCategory = categoryRatings[0]?.get("category") || "N/A";
 
-    // Most reviewed price range (using product price ranges)
-    const priceRangeData = await Review.findAll({
-      attributes: [
-        [sequelize.fn("COUNT", sequelize.col("Review.id")), "reviewCount"],
-      ],
-      include: [
-        {
-          model: Product,
-          as: "product",
-          attributes: ["price"],
-        },
-      ],
-      raw: true,
-    });
+    // Fixed: Most reviewed price range (using proper SQL grouping)
+    const priceRangeQuery = await sequelize.query(
+      `
+      SELECT 
+        CASE 
+          WHEN p.price < 20 THEN 'Under £20'
+          WHEN p.price < 50 THEN '£20-£50'
+          WHEN p.price < 100 THEN '£50-£100'
+          WHEN p.price < 200 THEN '£100-£200'
+          ELSE 'Over £200'
+        END as priceRange,
+        COUNT(r.id) as reviewCount
+      FROM reviews r
+      INNER JOIN products p ON r.productId = p.id
+      GROUP BY 
+        CASE 
+          WHEN p.price < 20 THEN 'Under £20'
+          WHEN p.price < 50 THEN '£20-£50'
+          WHEN p.price < 100 THEN '£50-£100'
+          WHEN p.price < 200 THEN '£100-£200'
+          ELSE 'Over £200'
+        END
+    `,
+      { type: QueryTypes.SELECT }
+    );
 
-    // Process price range data
-    const priceRanges = {
+    // Convert to the expected format
+    const priceRanges: { [key: string]: number } = {
       "Under £20": 0,
       "£20-£50": 0,
       "£50-£100": 0,
@@ -195,13 +206,10 @@ export const getAnalytics = async (
       "Over £200": 0,
     };
 
-    priceRangeData.forEach((item: any) => {
-      const price = parseFloat(item["product.price"]);
-      if (price < 20) priceRanges["Under £20"]++;
-      else if (price < 50) priceRanges["£20-£50"]++;
-      else if (price < 100) priceRanges["£50-£100"]++;
-      else if (price < 200) priceRanges["£100-£200"]++;
-      else priceRanges["Over £200"]++;
+    (priceRangeQuery as any[]).forEach((item: any) => {
+      if (item.priceRange && typeof item.priceRange === "string") {
+        priceRanges[item.priceRange] = parseInt(item.reviewCount);
+      }
     });
 
     const mostReviewedPriceRange = Object.entries(priceRanges).reduce((a, b) =>

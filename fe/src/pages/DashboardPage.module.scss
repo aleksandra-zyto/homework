@@ -1,0 +1,52 @@
+@import '../styles/colors';
+
+.dashboardPage {
+  min-height: 100vh;
+  background: $background-gray;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  @media (max-width: 1024px) {
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+}
+
+// Ensure each major section has consistent spacing and appearance
+.main > * {
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+// Additional responsive adjustments for the overall layout
+@media (max-width: 480px) {
+  .main {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+}

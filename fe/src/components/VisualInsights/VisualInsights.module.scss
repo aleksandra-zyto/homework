@@ -1,0 +1,128 @@
+@import '../../styles/colors';
+
+.visualInsights {
+  padding: 0 2rem 2rem 2rem;
+  // max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sectionTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: $text-primary;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  
+  .icon {
+    color: $primary;
+    display: flex;
+    align-items: center;
+    
+    svg {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+}
+
+.chartsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  
+  @media (min-width: 1024px) {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.chartControls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.chartTypeSelector {
+  display: flex;
+  background: $background-gray;
+  border-radius: 8px;
+  padding: 0.25rem;
+  gap: 0.25rem;
+}
+
+.chartTypeButton {
+  background: transparent;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $text-secondary;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    color: $text-primary;
+  }
+  
+  &.active {
+    background: $white;
+    color: $primary;
+    box-shadow: 0 1px 3px rgba($dark-bg, 0.1);
+  }
+}
+
+.viewSelector {
+  select {
+    background: $white;
+    border: 1px solid $border-medium;
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    color: $text-primary;
+    cursor: pointer;
+    outline: none;
+    
+    &:focus {
+      border-color: $primary;
+      box-shadow: 0 0 0 3px rgba($primary, 0.1);
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 1023px) {
+  .chartsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .chartControls {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .visualInsights {
+    padding: 0 1rem 2rem 1rem;
+  }
+  
+  .sectionTitle {
+    font-size: 1.5rem;
+    
+    .icon svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+  
+  .chartControls {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .chartTypeSelector {
+      justify-content: center;
+    }
+  }
+}

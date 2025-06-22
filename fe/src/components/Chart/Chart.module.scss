@@ -1,0 +1,176 @@
+@import '../../styles/colors';
+
+.chartContainer {
+  background: $white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba($dark-bg, 0.05), 0 1px 3px rgba($dark-bg, 0.1);
+  padding: 1.5rem;
+  border: 1px solid $border-light;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    box-shadow: 0 8px 25px rgba($dark-bg, 0.1), 0 4px 10px rgba($dark-bg, 0.05);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid $border-light;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: $text-primary;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: $text-secondary;
+  margin: 0;
+  margin-top: 0.25rem;
+}
+
+.controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.chartWrapper {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  min-height: 350px;
+  overflow: hidden;
+  
+  // Ensure recharts components don't overflow
+  .recharts-wrapper {
+    max-width: 100% !important;
+    max-height: 100% !important;
+  }
+}
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 350px;
+  color: $text-secondary;
+  
+  .spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid rgba($primary, 0.3);
+    border-top: 3px solid $primary;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 1rem;
+  }
+}
+
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 350px;
+  color: $danger;
+  text-align: center;
+  
+  .errorIcon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .errorMessage {
+    color: $text-secondary;
+    margin-bottom: 1rem;
+  }
+}
+
+.noDataState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 350px;
+  color: $text-secondary;
+  text-align: center;
+  
+  .noDataIcon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+  
+  .noDataMessage {
+    font-weight: 500;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Chart type specific styles
+.barChart {
+  .bar {
+    transition: all 0.2s ease;
+    
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+.pieChart {
+  .slice {
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform-origin: center;
+      transform: scale(1.05);
+    }
+  }
+}
+
+// Legend styles
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid $border-light;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: $text-primary;
+}
+
+.legendColor {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.legendLabel {
+  font-weight: 500;
+}
+
+.legendValue {
+  color: $text-secondary;
+  font-weight: 400;
+}
