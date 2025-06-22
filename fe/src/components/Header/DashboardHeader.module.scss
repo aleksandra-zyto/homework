@@ -1,0 +1,29 @@
+@import '../../styles/colors';
+
+.header {
+  background: $white;
+  border-bottom: 1px solid $border-light;
+  box-shadow: 0 1px 3px rgba($dark-bg, 0.1);
+  padding: 8px 30px;
+}
+
+.container {
+  margin: 0 ;
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  height: 4rem;
+  width: 100%;
+  margin: 0 auto; 
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $primary;
+  white-space: nowrap;
+
+  @media (max-width: 640px) {
+    font-size: 1.25rem;
+  }
+}
