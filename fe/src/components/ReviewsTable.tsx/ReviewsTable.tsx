@@ -9,13 +9,21 @@ interface ReviewsTableProps {
   className?: string;
 }
 
-const PRICE_RANGES = [
-  "All Prices",
-  "Under £20",
-  "£20-£50",
-  "£50-£100",
-  "£100-£200",
-  "Over £200",
+const CATEGORIES = [
+  "All Categories",
+  "Electronics",
+  "Clothing",
+  "Home & Garden",
+  "Sports",
+  "Beauty",
+  "Food & Drink",
+];
+
+const RATING_FILTERS = [
+  "All Ratings",
+  "1-2", // Low ratings
+  "3", // Average ratings
+  "4-5", // High ratings
 ];
 
 export const ReviewsTable = ({
@@ -33,17 +41,19 @@ export const ReviewsTable = ({
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedPriceRange, setSelectedPriceRange] = useState("All Prices");
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [selectedRating, setSelectedRating] = useState("All Ratings");
 
   const fetchReviews = async (
     page: number = 1,
-    priceRange: string = "All Prices"
+    category: string = "All Categories",
+    rating: string = "All Ratings"
   ) => {
     try {
       setLoading(true);
       setError(null);
 
-      // Build query parameters
+      // Build query parameters for backend filtering
       const params: any = {
         page,
         limit: 10,
@@ -51,53 +61,27 @@ export const ReviewsTable = ({
         sortOrder: "DESC",
       };
 
-      // Add price range filter if not "All Prices"
-      if (priceRange !== "All Prices") {
-        // We'll need to filter by the price range on the backend
-        // For now, we'll fetch all and filter client-side as a temporary solution
-        const response = await ApiService.getReviews(params);
-
-        let filteredReviews = response.reviews;
-
-        if (priceRange !== "All Prices") {
-          filteredReviews = response.reviews.filter((review) => {
-            if (!review.product?.price) return false;
-
-            const price = review.product.price;
-            switch (priceRange) {
-              case "Under £20":
-                return price < 20;
-              case "£20-£50":
-                return price >= 20 && price < 50;
-              case "£50-£100":
-                return price >= 50 && price < 100;
-              case "£100-£200":
-                return price >= 100 && price < 200;
-              case "Over £200":
-                return price >= 200;
-              default:
-                return true;
-            }
-          });
-        }
-
-        setReviews(filteredReviews);
-
-        // Update pagination for filtered results
-        const totalFiltered = filteredReviews.length;
-        setPagination({
-          currentPage: page,
-          totalPages: Math.ceil(totalFiltered / 10),
-          totalItems: totalFiltered,
-          itemsPerPage: 10,
-          hasNextPage: page < Math.ceil(totalFiltered / 10),
-          hasPrevPage: page > 1,
-        });
-      } else {
-        const response = await ApiService.getReviews(params);
-        setReviews(response.reviews);
-        setPagination(response.pagination);
+      // Add category filter if not "All Categories"
+      if (category !== "All Categories") {
+        params.category = category;
       }
+
+      // Add rating filter if not "All Ratings"
+      if (rating !== "All Ratings") {
+        params.rating = rating;
+      }
+
+      console.log("Sending API request with params:", params);
+
+      const response = await ApiService.getReviews(params);
+
+      console.log("Received response:", {
+        reviewCount: response.reviews.length,
+        pagination: response.pagination,
+      });
+
+      setReviews(response.reviews);
+      setPagination(response.pagination);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch reviews");
       console.error("Error fetching reviews:", err);
@@ -107,22 +91,28 @@ export const ReviewsTable = ({
   };
 
   useEffect(() => {
-    fetchReviews(1, selectedPriceRange);
-  }, [selectedPriceRange]);
+    fetchReviews(1, selectedCategory, selectedRating);
+  }, [selectedCategory, selectedRating]);
 
   useEffect(() => {
     if (refreshTrigger > 0) {
       console.log("ReviewsTable: Refresh triggered");
-      fetchReviews(pagination.currentPage, selectedPriceRange);
+      fetchReviews(pagination.currentPage, selectedCategory, selectedRating);
     }
   }, [refreshTrigger]);
 
   const handlePageChange = (newPage: number) => {
-    fetchReviews(newPage, selectedPriceRange);
+    fetchReviews(newPage, selectedCategory, selectedRating);
   };
 
-  const handlePriceRangeChange = (range: string) => {
-    setSelectedPriceRange(range);
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    // Reset to page 1 when filtering changes
+  };
+
+  const handleRatingChange = (rating: string) => {
+    setSelectedRating(rating);
+    // Reset to page 1 when filtering changes
   };
 
   const formatDate = (dateString: string) => {
@@ -152,7 +142,7 @@ export const ReviewsTable = ({
         <div className={styles.error}>
           <p>Error loading reviews: {error}</p>
           <Button
-            onClick={() => fetchReviews(1, selectedPriceRange)}
+            onClick={() => fetchReviews(1, selectedCategory, selectedRating)}
             size="small"
           >
             Retry
@@ -167,16 +157,30 @@ export const ReviewsTable = ({
       <div className={styles.header}>
         <h3>Recent Reviews</h3>
         <div className={styles.filters}>
-          <label htmlFor="priceRange">Filter by Price Range:</label>
+          <label htmlFor="categoryFilter">Filter by Category:</label>
           <select
-            id="priceRange"
-            value={selectedPriceRange}
-            onChange={(e) => handlePriceRangeChange(e.target.value)}
+            id="categoryFilter"
+            value={selectedCategory}
+            onChange={(e) => handleCategoryChange(e.target.value)}
             className={styles.select}
           >
-            {PRICE_RANGES.map((range) => (
-              <option key={range} value={range}>
-                {range}
+            {CATEGORIES.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+
+          <label htmlFor="ratingFilter">Filter by Rating:</label>
+          <select
+            id="ratingFilter"
+            value={selectedRating}
+            onChange={(e) => handleRatingChange(e.target.value)}
+            className={styles.select}
+          >
+            {RATING_FILTERS.map((rating) => (
+              <option key={rating} value={rating}>
+                {rating === "All Ratings" ? "All Ratings" : `${rating} Stars`}
               </option>
             ))}
           </select>
@@ -205,7 +209,7 @@ export const ReviewsTable = ({
                 {reviews.length === 0 ? (
                   <tr>
                     <td colSpan={6} className={styles.noData}>
-                      No reviews found for the selected price range.
+                      No reviews found for the selected filters.
                     </td>
                   </tr>
                 ) : (
