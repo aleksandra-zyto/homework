@@ -75,6 +75,7 @@ export interface CategoryRating {
 export interface AnalyticsResponse {
   storeInsights: StoreInsights;
   categoryRatings: CategoryRating[];
+  ratingDistribution: Record<string, number>;
   priceRangeDistribution: Record<string, number>;
   productsNeedingAttention: any[];
   recentReviews: Review[];

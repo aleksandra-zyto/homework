@@ -114,26 +114,15 @@ export const VisualInsights = ({ refreshTrigger = 0 }: VisualInsightsProps) => {
         }));
 
       case "rating":
-        // Create rating distribution from 1-5 stars
-        const ratingDistribution = [1, 2, 3, 4, 5].map((rating) => {
-          // This is a simplified calculation - you might want to get actual rating distribution from your API
-          const count = analytics.categoryRatings.reduce((total, category) => {
-            // Estimate distribution based on average rating
-            if (
-              category.avgRating >= rating - 0.5 &&
-              category.avgRating < rating + 0.5
-            ) {
-              return total + category.reviewCount;
-            }
-            return total;
-          }, 0);
-
-          return {
+        // Use actual rating distribution from backend
+        const ratingData = analytics.ratingDistribution || {};
+        // Ensure we show all rating levels (1-5 stars) even if there are no reviews for some
+        return [1, 2, 3, 4, 5]
+          .map((rating) => ({
             name: `${rating} Star${rating !== 1 ? "s" : ""}`,
-            value: count,
-          };
-        });
-        return ratingDistribution.filter((item) => item.value > 0);
+            value: ratingData[`${rating} Star${rating !== 1 ? "s" : ""}`] || 0,
+          }))
+          .filter((item) => item.value > 0); // Only show ratings that have reviews
 
       case "priceRange":
         return Object.entries(analytics.priceRangeDistribution || {}).map(

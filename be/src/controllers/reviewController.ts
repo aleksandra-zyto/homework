@@ -171,6 +171,16 @@ export const getAnalytics = async (
 
     const bestCategory = categoryRatings[0]?.get("category") || "N/A";
 
+    // Rating distribution (actual counts by rating)
+    const ratingDistribution = await Review.findAll({
+      attributes: [
+        "rating",
+        [sequelize.fn("COUNT", sequelize.col("id")), "count"],
+      ],
+      group: ["rating"],
+      order: [["rating", "ASC"]],
+    });
+
     // Fixed: Most reviewed price range (using proper SQL grouping)
     const priceRangeQuery = await sequelize.query(
       `
@@ -258,6 +268,12 @@ export const getAnalytics = async (
         mostReviewedPriceRange,
       },
       categoryRatings,
+      ratingDistribution: ratingDistribution.reduce((acc: any, item: any) => {
+        acc[
+          `${item.get("rating")} Star${item.get("rating") !== 1 ? "s" : ""}`
+        ] = parseInt(item.get("count"));
+        return acc;
+      }, {}),
       priceRangeDistribution: priceRanges,
       productsNeedingAttention,
       recentReviews,
