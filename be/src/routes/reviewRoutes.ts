@@ -9,8 +9,11 @@ import { authenticateToken } from "../middleware/auth";
 
 const router = Router();
 
+// Apply authentication middleware to all routes
+router.use(authenticateToken);
+
 // POST /api/reviews - Create a new review
-router.post("/", createReview); // For now, no auth required for testing
+router.post("/", createReview);
 
 // GET /api/reviews - Get all reviews with pagination and filtering
 router.get("/", getReviews);

@@ -6,8 +6,12 @@ import {
   createProduct,
   getProduct,
 } from "../controllers/productController";
+import { authenticateToken } from "../middleware/auth";
 
 const router = Router();
+
+// Apply authentication middleware to all routes
+router.use(authenticateToken);
 
 // GET /api/products - Get all products (for dropdown)
 router.get("/", getProducts);
