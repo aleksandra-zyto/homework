@@ -5,6 +5,10 @@ import { AnalyticsResponse } from "../../types/api";
 import { Button } from "../Button";
 import styles from "./VisualInsights.module.scss";
 
+interface VisualInsightsProps {
+  refreshTrigger?: number; // When this changes, component will refresh
+}
+
 // Icons
 const ChartIcon = () => (
   <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -65,7 +69,7 @@ const RefreshIcon = () => (
 type ChartViewType = "category" | "rating" | "priceRange";
 type ChartType = "bar" | "pie";
 
-export const VisualInsights = () => {
+export const VisualInsights = ({ refreshTrigger = 0 }: VisualInsightsProps) => {
   const [analytics, setAnalytics] = useState<AnalyticsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -89,6 +93,13 @@ export const VisualInsights = () => {
   useEffect(() => {
     fetchAnalytics();
   }, []);
+
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      console.log("VisualInsights: Refresh triggered");
+      fetchAnalytics();
+    }
+  }, [refreshTrigger]);
 
   // Transform analytics data for charts
   const chartData = useMemo((): ChartData[] => {

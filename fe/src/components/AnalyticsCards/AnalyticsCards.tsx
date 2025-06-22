@@ -5,6 +5,10 @@ import { AnalyticsResponse } from "../../types/api";
 import { Button } from "../Button";
 import styles from "./AnalyticsCards.module.scss";
 
+interface AnalyticsCardsProps {
+  refreshTrigger?: number; // When this changes, component will refresh
+}
+
 // Icons (you can replace these with your preferred icon library)
 const ChartBarIcon = () => (
   <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,7 +64,7 @@ const RefreshIcon = () => (
     />
   </svg>
 );
-export const AnalyticsCards = () => {
+export const AnalyticsCards = ({ refreshTrigger = 0 }: AnalyticsCardsProps) => {
   const [analytics, setAnalytics] = useState<AnalyticsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -82,6 +86,13 @@ export const AnalyticsCards = () => {
   useEffect(() => {
     fetchAnalytics();
   }, []);
+
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      console.log("AnalyticsCards: Refresh triggered");
+      fetchAnalytics();
+    }
+  }, [refreshTrigger]);
 
   const handleRefresh = () => {
     fetchAnalytics();

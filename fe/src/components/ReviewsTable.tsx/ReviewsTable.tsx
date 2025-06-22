@@ -5,6 +5,7 @@ import { Button } from "../Button";
 import styles from "./ReviewsTable.module.scss";
 
 interface ReviewsTableProps {
+  refreshTrigger?: number; // When this changes, component will refresh
   className?: string;
 }
 
@@ -17,9 +18,10 @@ const PRICE_RANGES = [
   "Over £200",
 ];
 
-export const ReviewsTable: React.FC<ReviewsTableProps> = ({
+export const ReviewsTable = ({
   className = "",
-}) => {
+  refreshTrigger = 0,
+}: ReviewsTableProps) => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo>({
     currentPage: 1,
@@ -107,6 +109,13 @@ export const ReviewsTable: React.FC<ReviewsTableProps> = ({
   useEffect(() => {
     fetchReviews(1, selectedPriceRange);
   }, [selectedPriceRange]);
+
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      console.log("ReviewsTable: Refresh triggered");
+      fetchReviews(pagination.currentPage, selectedPriceRange);
+    }
+  }, [refreshTrigger]);
 
   const handlePageChange = (newPage: number) => {
     fetchReviews(newPage, selectedPriceRange);

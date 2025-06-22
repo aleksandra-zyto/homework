@@ -1,4 +1,3 @@
-// fe/src/pages/DashboardPage.tsx
 import React, { useState } from "react";
 import DashboardHeader from "../components/Header/DashboardHeader";
 import { AnalyticsCards } from "../components/AnalyticsCards/AnalyticsCards";
@@ -32,9 +31,19 @@ export const DashboardPage = () => {
     message: string;
   } | null>(null);
 
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  // Function to trigger refresh across all components
+  const triggerRefresh = () => {
+    console.log("Triggering refresh across all components...");
+    setRefreshTrigger((prev) => prev + 1);
+  };
+
   const handleAddReviewSuccess = (message: string) => {
     setNotification({ type: "success", message });
     // Auto-hide notification after 5 seconds
+    triggerRefresh();
+
     setTimeout(() => setNotification(null), 5000);
   };
 
@@ -78,9 +87,11 @@ export const DashboardPage = () => {
       </Button>
 
       <main className={styles.main}>
-        <AnalyticsCards />
-        <VisualInsights />
-        <ReviewsTable />
+        <AnalyticsCards refreshTrigger={refreshTrigger} />
+
+        <VisualInsights refreshTrigger={refreshTrigger} />
+
+        <ReviewsTable refreshTrigger={refreshTrigger} />
       </main>
 
       {/* Add Review Modal */}
