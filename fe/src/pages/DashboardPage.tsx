@@ -59,7 +59,7 @@ export const DashboardPage = () => {
 
   return (
     <div className={styles.dashboardPage}>
-      <DashboardHeader />
+      <DashboardHeader onRefresh={triggerRefresh} />
 
       {/* Notification */}
       {notification && (

@@ -49,23 +49,6 @@ const PieChartIcon = () => (
   </svg>
 );
 
-const RefreshIcon = () => (
-  <svg
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-    width="20"
-    height="20"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-    />
-  </svg>
-);
-
 type ChartViewType = "category" | "rating" | "priceRange";
 type ChartType = "bar" | "pie";
 
@@ -163,18 +146,6 @@ export const VisualInsights = ({ refreshTrigger = 0 }: VisualInsightsProps) => {
     }
   };
 
-  // Secondary chart - always show price range distribution as pie chart
-  const secondaryChartData = useMemo((): ChartData[] => {
-    if (!analytics?.priceRangeDistribution) return [];
-
-    return Object.entries(analytics.priceRangeDistribution).map(
-      ([range, count]) => ({
-        name: range,
-        value: count,
-      })
-    );
-  }, [analytics]);
-
   return (
     <div className={styles.visualInsights}>
       <div className={styles.sectionTitle}>
@@ -182,15 +153,6 @@ export const VisualInsights = ({ refreshTrigger = 0 }: VisualInsightsProps) => {
           <ChartIcon />
         </div>
         <span>Visual Insights</span>
-        <Button
-          onClick={fetchAnalytics}
-          variant="outlined"
-          size="small"
-          startIcon={<RefreshIcon />}
-          disabled={loading}
-        >
-          Refresh
-        </Button>
       </div>
 
       {/* Main Chart */}

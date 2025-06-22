@@ -48,22 +48,7 @@ const CurrencyIcon = () => (
     />
   </svg>
 );
-const RefreshIcon = () => (
-  <svg
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-    width="20"
-    height="20"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-    />
-  </svg>
-);
+
 export const AnalyticsCards = ({ refreshTrigger = 0 }: AnalyticsCardsProps) => {
   const [analytics, setAnalytics] = useState<AnalyticsResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -119,15 +104,6 @@ export const AnalyticsCards = ({ refreshTrigger = 0 }: AnalyticsCardsProps) => {
           <ChartBarIcon />
         </div>
         <span>Store Insights</span>
-        <Button
-          onClick={handleRefresh}
-          variant="outlined"
-          size="small"
-          startIcon={<RefreshIcon />}
-          disabled={loading}
-        >
-          Refresh
-        </Button>
       </div>
 
       <div
