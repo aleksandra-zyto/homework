@@ -6,10 +6,11 @@ import { Button } from "../Button";
 import styles from "./AnalyticsCards.module.scss";
 
 interface AnalyticsCardsProps {
-  refreshTrigger?: number; // When this changes, component will refresh
+  analytics?: AnalyticsResponse | null;
+  loading?: boolean;
+  error?: string | null;
 }
 
-// Icons (you can replace these with your preferred icon library)
 const ChartBarIcon = () => (
   <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path
@@ -49,49 +50,17 @@ const CurrencyIcon = () => (
   </svg>
 );
 
-export const AnalyticsCards = ({ refreshTrigger = 0 }: AnalyticsCardsProps) => {
-  const [analytics, setAnalytics] = useState<AnalyticsResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchAnalytics = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await ApiService.getAnalytics();
-      setAnalytics(data);
-    } catch (err: any) {
-      setError(err.message || "Failed to load analytics data");
-      console.error("Analytics fetch error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAnalytics();
-  }, []);
-
-  useEffect(() => {
-    if (refreshTrigger > 0) {
-      console.log("AnalyticsCards: Refresh triggered");
-      fetchAnalytics();
-    }
-  }, [refreshTrigger]);
-
-  const handleRefresh = () => {
-    fetchAnalytics();
-  };
-
+export const AnalyticsCards = ({
+  analytics,
+  loading,
+  error,
+}: AnalyticsCardsProps) => {
   if (error) {
     return (
       <div className={styles.analyticsCards}>
         <div className={styles.errorState}>
           <h3 className={styles.errorTitle}>Failed to Load Analytics</h3>
           <p className={styles.errorMessage}>{error}</p>
-          <Button onClick={handleRefresh} variant="primary" size="small">
-            Try Again
-          </Button>
         </div>
       </div>
     );

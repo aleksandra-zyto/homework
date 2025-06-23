@@ -6,7 +6,9 @@ import { Button } from "../Button";
 import styles from "./VisualInsights.module.scss";
 
 interface VisualInsightsProps {
-  refreshTrigger?: number; // When this changes, component will refresh
+  analytics: AnalyticsResponse | null;
+  loading?: boolean;
+  error?: string | null;
 }
 
 // Icons
@@ -52,37 +54,13 @@ const PieChartIcon = () => (
 type ChartViewType = "category" | "rating" | "priceRange";
 type ChartType = "bar" | "pie";
 
-export const VisualInsights = ({ refreshTrigger = 0 }: VisualInsightsProps) => {
-  const [analytics, setAnalytics] = useState<AnalyticsResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export const VisualInsights = ({
+  analytics,
+  loading,
+  error,
+}: VisualInsightsProps) => {
   const [chartView, setChartView] = useState<ChartViewType>("category");
   const [chartType, setChartType] = useState<ChartType>("bar");
-
-  const fetchAnalytics = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await ApiService.getAnalytics();
-      setAnalytics(data);
-    } catch (err: any) {
-      setError(err.message || "Failed to load analytics data");
-      console.error("Analytics fetch error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAnalytics();
-  }, []);
-
-  useEffect(() => {
-    if (refreshTrigger > 0) {
-      console.log("VisualInsights: Refresh triggered");
-      fetchAnalytics();
-    }
-  }, [refreshTrigger]);
 
   // Transform analytics data for charts
   const chartData = useMemo((): ChartData[] => {
@@ -97,7 +75,6 @@ export const VisualInsights = ({ refreshTrigger = 0 }: VisualInsightsProps) => {
         }));
 
       case "rating":
-        // Use actual rating distribution from backend
         const ratingData = analytics.ratingDistribution || {};
         return [1, 2, 3, 4, 5]
           .map((rating) => ({

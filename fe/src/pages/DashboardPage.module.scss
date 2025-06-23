@@ -1,4 +1,3 @@
-// fe/src/pages/DashboardPage.module.scss
 @import '../styles/colors';
 
 .dashboardPage {
@@ -111,9 +110,7 @@
 .main > * {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-  &:hover {
-    transform: translateY(-1px);
-  }
+
 }
 
 @keyframes slideInRight {

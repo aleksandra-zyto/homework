@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DashboardHeader from "../components/Header/DashboardHeader";
 import { AnalyticsCards } from "../components/AnalyticsCards/AnalyticsCards";
 import { VisualInsights } from "../components/VisualInsights/VisualInsights";
@@ -6,6 +6,9 @@ import { ReviewsTable } from "../components/ReviewsTable.tsx";
 import { AddReviewModal } from "../components/AddReviewModal";
 import { Button } from "../components/Button";
 import styles from "./DashboardPage.module.scss";
+import { AnalyticsResponse } from "../types/api";
+import { ApiService } from "../services/apiService";
+import { ProductsNeedingAttention } from "../components/ProductsNeedingAttention";
 
 const PlusIcon = () => (
   <svg
@@ -26,12 +29,33 @@ const PlusIcon = () => (
 
 export const DashboardPage = () => {
   const [isAddReviewModalOpen, setIsAddReviewModalOpen] = useState(false);
+  const [analytics, setAnalytics] = useState<AnalyticsResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [notification, setNotification] = useState<{
     type: "success" | "error";
     message: string;
   } | null>(null);
 
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const fetchAnalytics = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await ApiService.getAnalytics();
+      setAnalytics(data);
+    } catch (err: any) {
+      setError(err.message || "Failed to load analytics data");
+      console.error("Analytics fetch error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, [refreshTrigger]);
 
   // Function to trigger refresh across all components
   const triggerRefresh = () => {
@@ -85,9 +109,15 @@ export const DashboardPage = () => {
       </Button>
 
       <main className={styles.main}>
-        <AnalyticsCards refreshTrigger={refreshTrigger} />
+        <AnalyticsCards analytics={analytics} loading={loading} error={error} />
 
-        <VisualInsights refreshTrigger={refreshTrigger} />
+        <ProductsNeedingAttention
+          analytics={analytics}
+          loading={loading}
+          error={error}
+        />
+
+        <VisualInsights analytics={analytics} loading={loading} error={error} />
 
         <ReviewsTable refreshTrigger={refreshTrigger} />
       </main>
