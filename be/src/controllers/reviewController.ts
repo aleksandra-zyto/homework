@@ -3,8 +3,25 @@ import Review from "../models/Review";
 import Product from "../models/Product";
 import { Op, QueryTypes } from "sequelize";
 import sequelize from "../config/database";
+import { JSDOM } from "jsdom";
+import DOMPurify from "dompurify";
 
-// Create a new review
+const window = new JSDOM("").window;
+const purify = DOMPurify(window as any);
+
+const sanitizeInput = (input: string): string => {
+  if (!input) return "";
+
+  // Remove all HTML tags and keep only text content
+  const cleaned = purify.sanitize(input, {
+    ALLOWED_TAGS: [], // No HTML tags allowed
+    ALLOWED_ATTR: [], // No attributes allowed
+    KEEP_CONTENT: true, // Keep text content
+  });
+
+  return cleaned.trim();
+};
+
 export const createReview = async (
   req: Request,
   res: Response
@@ -27,11 +44,23 @@ export const createReview = async (
       return;
     }
 
-    if (comment && comment.length > 300) {
-      res.status(400).json({
-        error: "Comment must be 300 characters or less",
-      });
-      return;
+    // Sanitize comment to prevent XSS
+    let sanitizedComment: string | undefined = undefined;
+    if (comment) {
+      sanitizedComment = sanitizeInput(comment);
+
+      // Check if sanitized comment exceeds length limit
+      if (sanitizedComment.length > 300) {
+        res.status(400).json({
+          error: "Comment must be 300 characters or less",
+        });
+        return;
+      }
+
+      // If comment becomes empty after sanitization, set to undefined
+      if (sanitizedComment.trim() === "") {
+        sanitizedComment = undefined;
+      }
     }
 
     // Get the product to copy its category
@@ -41,12 +70,12 @@ export const createReview = async (
       return;
     }
 
-    // Create the review with category copied from product
+    // Create the review with sanitized comment
     const review = await Review.create({
       productId: parseInt(productId),
-      category: product.category, // Copy category from product for fast analytics
+      category: product.category,
       rating: parseInt(rating),
-      comment: comment || null,
+      comment: sanitizedComment, // Use sanitized comment
     });
 
     // Get the created review with associated data
@@ -70,7 +99,6 @@ export const createReview = async (
   }
 };
 
-// Get all reviews with pagination and filtering
 export const getReviews = async (
   req: Request,
   res: Response
@@ -120,13 +148,22 @@ export const getReviews = async (
       offset,
     });
 
+    // Sanitize comments in the response
+    const sanitizedReviews = reviews.map((review) => {
+      const reviewData = review.toJSON();
+      if (reviewData.comment) {
+        reviewData.comment = sanitizeInput(reviewData.comment);
+      }
+      return reviewData;
+    });
+
     // Calculate pagination info
     const totalPages = Math.ceil(count / parseInt(limit as string));
     const hasNextPage = parseInt(page as string) < totalPages;
     const hasPrevPage = parseInt(page as string) > 1;
 
     res.status(200).json({
-      reviews,
+      reviews: sanitizedReviews,
       pagination: {
         currentPage: parseInt(page as string),
         totalPages,
@@ -142,7 +179,6 @@ export const getReviews = async (
   }
 };
 
-// Get analytics data for dashboard
 export const getAnalytics = async (
   req: Request,
   res: Response
@@ -247,7 +283,7 @@ export const getAnalytics = async (
       order: [[sequelize.fn("AVG", sequelize.col("rating")), "ASC"]],
     });
 
-    // Recent reviews
+    // Recent reviews with sanitized comments
     const recentReviews = await Review.findAll({
       include: [
         {
@@ -258,6 +294,15 @@ export const getAnalytics = async (
       ],
       order: [["createdAt", "DESC"]],
       limit: 5,
+    });
+
+    // Sanitize recent reviews comments
+    const sanitizedRecentReviews = recentReviews.map((review) => {
+      const reviewData = review.toJSON();
+      if (reviewData.comment) {
+        reviewData.comment = sanitizeInput(reviewData.comment);
+      }
+      return reviewData;
     });
 
     res.status(200).json({
@@ -276,7 +321,7 @@ export const getAnalytics = async (
       }, {}),
       priceRangeDistribution: priceRanges,
       productsNeedingAttention,
-      recentReviews,
+      recentReviews: sanitizedRecentReviews,
     });
   } catch (error) {
     console.error("Get analytics error:", error);
@@ -284,7 +329,6 @@ export const getAnalytics = async (
   }
 };
 
-// Get single review by ID
 export const getReview = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
@@ -304,7 +348,12 @@ export const getReview = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    res.status(200).json({ review });
+    const reviewData = review.toJSON();
+    if (reviewData.comment) {
+      reviewData.comment = sanitizeInput(reviewData.comment);
+    }
+
+    res.status(200).json({ review: reviewData });
   } catch (error) {
     console.error("Get review error:", error);
     res.status(500).json({ error: "Failed to get review" });
